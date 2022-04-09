@@ -4,12 +4,13 @@ import { MongoClient } from "mongodb";
 const app = express();
 
 const PORT = 5000;
-//middleware
+
+//Middleware
 app.use(express.json());
 //every request in the app body is parsed as json
 
 //mongodb connection settings
-const MONGO_URL = "mongodb+srv://gautham:gautham@blog.jcckq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const MONGO_URL = "mongodb://localhost";
 async function createConnection() {
     const client = new MongoClient(MONGO_URL);
     await client.connect(); //returns a promise object
@@ -26,6 +27,13 @@ app.get("/", (request, response) => {
 app.get("/movies", async (request, response) => {
     //request-> query params
     console.log(request.query);
+
+    //to filter the movie as per condition
+    const filter = request.query;
+    console.log(filter)
+    if (filter.rating) {
+        filter.rating = parseInt(filter.rating)
+    }
     // const { language, rating } = request.query
     // console.log(language, rating);
     // let filterMovies = movies
@@ -41,12 +49,17 @@ app.get("/movies", async (request, response) => {
         .db("b28wd")
         .collection("movies")
         .find({})
+        .toArray()
     response.send(filterMovies);
 });
 app.post("/movies", async (request, response) => {
     const data = request.body;
-    console.log(data);
-    response.send(data);
+    //console.log(data);
+    const result = await client
+        .db("b28wd")
+        .collection("movies")
+        .insertMany(data);
+    response.send(result);
 })
 
 app.get("/movies/:id", async (request, response) => {
