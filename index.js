@@ -2,12 +2,15 @@
 import express from "express"; //"type":"module"
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
-import { moviesRouter } from "./routes/movies.js"
+import { moviesRouter } from "./routes/movies.js";
+import cors from "cors"
 
 dotenv.config();
 export const app = express();
 
-const PORT = process.env.PORT ;
+const PORT = process.env.PORT;
+//middleware-used to listen to all request and allow all requests to access
+app.use(cors())
 
 //Middleware
 app.use(express.json());
